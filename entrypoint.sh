@@ -38,7 +38,13 @@ fi
 if ! flyctl status --app "$app"; then
   # Backup the original config file since 'flyctl launch' messes up the [build.args] section
   cp "$config" "$config.bak"
+
+  # Change PHX_HOST to the PR hostname
+  dasel put -t string -v "$app.fly.dev" -f fly.toml -r toml '.env.PHX_HOST'
+
+  # Deploy with modified config file
   flyctl launch --no-deploy --copy-config --name "$app" --image "$image" --region "$region" --org "$org"
+
   # Restore the original config file
   cp "$config.bak" "$config"
 fi
