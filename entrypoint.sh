@@ -34,13 +34,13 @@ if [ "$EVENT_TYPE" = "closed" ]; then
   exit 0
 fi
 
+# Change PHX_HOST to the PR hostname prior to deploying
+dasel put -t string -v "$app.fly.dev" -f fly.toml -r toml '.env.PHX_HOST'
+
 # Deploy the Fly app, creating it first if needed.
 if ! flyctl status --app "$app"; then
   # Backup the original config file since 'flyctl launch' messes up the [build.args] section
   cp "$config" "$config.bak"
-
-  # Change PHX_HOST to the PR hostname
-  dasel put -t string -v "$app.fly.dev" -f fly.toml -r toml '.env.PHX_HOST'
 
   # Deploy with modified config file
   flyctl launch --no-deploy --copy-config --name "$app" --image "$image" --region "$region" --org "$org"
