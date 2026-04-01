@@ -52,7 +52,9 @@ if [ -n "$INPUT_POSTGRES" ]; then
 fi
 
 # Stop all running machines prior to deployment
-flyctl scale count 0 --yes --app "$app"
+if flyctl status --app "$app" --json | grep -q '"Status": "deployed"'; then
+  flyctl scale count 0 --yes --app "$app"
+fi
 
 # Trigger the deploy of the new version.
 echo "Contents of config $config file: " && cat "$config"
