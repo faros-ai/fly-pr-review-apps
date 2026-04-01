@@ -51,6 +51,9 @@ if [ -n "$INPUT_POSTGRES" ]; then
   flyctl postgres attach --postgres-app "$INPUT_POSTGRES" || true
 fi
 
+# Stop all running machines prior to deployment
+flyctl scale count 0 --yes --app "$app"
+
 # Trigger the deploy of the new version.
 echo "Contents of config $config file: " && cat "$config"
 if [ -n "$INPUT_VM" ]; then
